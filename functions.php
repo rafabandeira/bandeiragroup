@@ -1,0 +1,323 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+
+function bandeiragroup_scripts() {
+    // Enfileira os estilos
+    wp_enqueue_style( 'bootstrap-css', get_template_directory_uri() . '/assets/vendor/bootstrap/css/bootstrap.min.css', [], '5.3.2' );
+    wp_enqueue_style( 'bootstrap-icons', get_template_directory_uri() . '/assets/vendor/bootstrap-icons/bootstrap-icons.css', [], '1.9.1' );
+    wp_enqueue_style( 'aos-css', get_template_directory_uri() . '/assets/vendor/aos/aos.css', [], '2.3.1' );
+    wp_enqueue_style( 'glightbox-css', get_template_directory_uri() . '/assets/vendor/glightbox/css/glightbox.min.css', [], '3.2.0' );
+    wp_enqueue_style( 'swiper-css', get_template_directory_uri() . '/assets/vendor/swiper/swiper-bundle.min.css', [], '8.4.5' );
+    wp_enqueue_style( 'variables-css', get_template_directory_uri() . '/assets/css/variables.css', [], wp_get_theme()->get('Version') );
+    wp_enqueue_style( 'variables-green-css', get_template_directory_uri() . '/assets/css/variables-green.css', ['variables-css'], wp_get_theme()->get('Version') );
+    wp_enqueue_style( 'bandeiragroup-style', get_template_directory_uri() . '/assets/css/main.css', ['bootstrap-css'], wp_get_theme()->get('Version') );
+    
+    // Enfileira os scripts
+    wp_enqueue_script( 'bootstrap-bundle', get_template_directory_uri() . '/assets/vendor/bootstrap/js/bootstrap.bundle.min.js', ['jquery'], '5.3.2', true );
+    wp_enqueue_script( 'aos-js', get_template_directory_uri() . '/assets/vendor/aos/aos.js', [], '2.3.1', true );
+    wp_enqueue_script( 'glightbox-js', get_template_directory_uri() . '/assets/vendor/glightbox/js/glightbox.min.js', [], '3.2.0', true );
+    wp_enqueue_script( 'isotope', get_template_directory_uri() . '/assets/vendor/isotope-layout/isotope.pkgd.min.js', ['jquery'], '3.0.6', true );
+    wp_enqueue_script( 'swiper', get_template_directory_uri() . '/assets/vendor/swiper/swiper-bundle.min.js', [], '8.4.5', true );
+    wp_enqueue_script( 'php-email-form-validate', get_template_directory_uri() . '/assets/vendor/php-email-form/validate.js', [], null, true );
+    
+    // JS principal do tema
+    wp_enqueue_script( 'bandeiragroup-main-js', get_template_directory_uri() . '/assets/js/main.js', ['jquery', 'bootstrap-bundle', 'aos-js', 'glightbox-js', 'isotope', 'swiper'], wp_get_theme()->get('Version'), true );
+    
+    // Configurações do Google Analytics
+    wp_enqueue_script( 'google-gtag', 'https://www.googletagmanager.com/gtag/js?id=G-C65NK3MMLN', [], null, false );
+    wp_add_inline_script( 'google-gtag', "window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-C65NK3MMLN');", 'after' );
+}
+add_action( 'wp_enqueue_scripts', 'bandeiragroup_scripts' );
+
+// Configuração do tema
+function bandeiragroup_setup() {
+    add_theme_support( 'title-tag' );
+    add_theme_support( 'post-thumbnails' );
+    add_theme_support( 'automatic-feed-links' );
+    add_theme_support( 'html5', [ 'search-form', 'comment-form', 'comment-list', 'gallery', 'caption' ] );
+
+}
+add_action( 'after_setup_theme', 'bandeiragroup_setup' );
+
+
+
+
+
+/**
+ * Registra uma nova página de menu para as opções de contato do tema.
+ */
+function bandeiragroup_register_contact_options_page() {
+    add_menu_page(
+        __( 'Opções de Contato', 'bandeiragroup' ), // Título da página
+        __( 'Contatos', 'bandeiragroup' ), // Título do menu
+        'manage_options', // Capacidade necessária para ver o menu
+        'bandeiragroup-contact-settings', // Slug do menu
+        'bandeiragroup_contact_options_page_html', // Função que renderiza o HTML da página
+        'dashicons-phone', // Ícone do menu
+        60 // Posição do menu
+    );
+}
+add_action( 'admin_menu', 'bandeiragroup_register_contact_options_page' );
+/**
+ * Registra as configurações do menu de opções.
+ */
+function bandeiragroup_contact_settings_init() {
+    // Registra a configuração de endereço
+    register_setting( 'bandeiragroup-contact-settings-group', 'bandeiragroup_contact_address', [
+        'type' => 'string',
+        'sanitize_callback' => 'sanitize_textarea_field',
+        'default' => '',
+    ] );
+
+    // Registra a configuração de e-mail
+    register_setting( 'bandeiragroup-contact-settings-group', 'bandeiragroup_contact_email', [
+        'type' => 'string',
+        'sanitize_callback' => 'sanitize_email',
+        'default' => '',
+    ] );
+
+    // Registra a configuração de WhatsApp
+    register_setting( 'bandeiragroup-contact-settings-group', 'bandeiragroup_contact_whatsapp', [
+        'type' => 'string',
+        'sanitize_callback' => 'sanitize_text_field',
+        'default' => '',
+    ] );
+}
+add_action( 'admin_init', 'bandeiragroup_contact_settings_init' );
+/**
+ * Renderiza o HTML da página de opções de contato.
+ */
+function bandeiragroup_contact_options_page_html() {
+    // Verifica se o usuário tem a capacidade necessária
+    if ( ! current_user_can( 'manage_options' ) ) {
+        return;
+    }
+    // Exibe as mensagens de erro ou sucesso
+    if ( isset( $_GET['settings-updated'] ) ) {
+        settings_errors();
+    }
+    ?>
+    <div class="wrap">
+        <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+        <form action="options.php" method="post">
+            <?php
+            // Campos de segurança e grupos de configurações
+            settings_fields( 'bandeiragroup-contact-settings-group' );
+            do_settings_sections( 'bandeiragroup-contact-settings-group' );
+            ?>
+            <table class="form-table">
+                <tbody>
+                    <tr>
+                        <th scope="row"><label for="bandeiragroup_contact_address">Endereço</label></th>
+                        <td>
+                            <textarea id="bandeiragroup_contact_address" name="bandeiragroup_contact_address" class="large-text code"><?php echo esc_textarea( get_option( 'bandeiragroup_contact_address' ) ); ?></textarea>
+                            <p class="description">Insira o endereço completo.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="bandeiragroup_contact_email">Email</label></th>
+                        <td>
+                            <input type="email" id="bandeiragroup_contact_email" name="bandeiragroup_contact_email" value="<?php echo esc_attr( get_option( 'bandeiragroup_contact_email' ) ); ?>" class="regular-text">
+                            <p class="description">Insira o email de contato.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="bandeiragroup_contact_whatsapp">WhatsApp</label></th>
+                        <td>
+                            <input type="text" id="bandeiragroup_contact_whatsapp" name="bandeiragroup_contact_whatsapp" value="<?php echo esc_attr( get_option( 'bandeiragroup_contact_whatsapp' ) ); ?>" class="regular-text">
+                            <p class="description">Insira o número de WhatsApp com DDD. Apenas números.</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <?php
+            // Botão de salvar
+            submit_button( 'Salvar Configurações' );
+            ?>
+        </form>
+    </div>
+    <?php
+}
+/**
+ * Remove todos os caracteres não numéricos de uma string.
+ *
+ * @param string $number O número de telefone com ou sem formatação.
+ * @return string O número de telefone apenas com dígitos.
+ */
+function clean_whatsapp_number( $number ) {
+    return preg_replace( '/[^0-9]/', '', $number );
+}
+
+
+
+
+
+
+
+// ====================================================================
+// START: CONFIGURAÇÃO DO PORTFÓLIO
+// ====================================================================
+
+// Registra o Custom Post Type 'Portfolio'
+function bandeiragroup_register_portfolio_cpt() {
+    $labels = [
+        'name'               => _x( 'Portfólios', 'post type general name', 'meu-tema' ),
+        'singular_name'      => _x( 'Portfólio', 'post type singular name', 'meu-tema' ),
+        'menu_name'          => _x( 'Portfólio', 'admin menu', 'meu-tema' ),
+        'name_admin_bar'     => _x( 'Portfólio', 'add new on admin bar', 'meu-tema' ),
+        'add_new'            => _x( 'Adicionar Novo', 'book', 'meu-tema' ),
+        'add_new_item'       => __( 'Adicionar Novo Portfólio', 'meu-tema' ),
+        'new_item'           => __( 'Novo Portfólio', 'meu-tema' ),
+        'edit_item'          => __( 'Editar Portfólio', 'meu-tema' ),
+        'view_item'          => __( 'Ver Portfólio', 'meu-tema' ),
+        'all_items'          => __( 'Todos os Portfólios', 'meu-tema' ),
+        'search_items'       => __( 'Pesquisar Portfólios', 'meu-tema' ),
+        'parent_item_colon'  => __( 'Portfólios Pais:', 'meu-tema' ),
+        'not_found'          => __( 'Nenhum portfólio encontrado.', 'meu-tema' ),
+        'not_found_in_trash' => __( 'Nenhum portfólio encontrado na lixeira.', 'meu-tema' ),
+    ];
+
+    $args = [
+        'labels'             => $labels,
+        'public'             => true,
+        'publicly_queryable' => true,
+        'show_ui'            => true,
+        'show_in_menu'       => true,
+        'query_var'          => true,
+        'rewrite'            => [ 'slug' => 'portfolio' ],
+        'capability_type'    => 'post',
+        'has_archive'        => true,
+        'hierarchical'       => false,
+        'menu_position'      => 5,
+        'supports'           => [ 'title', 'editor', 'thumbnail' ],
+        'menu_icon'          => 'dashicons-portfolio',
+        'show_in_rest'       => true,
+    ];
+
+    register_post_type( 'portfolio', $args );
+}
+add_action( 'init', 'bandeiragroup_register_portfolio_cpt' );
+
+
+// Registra a Custom Taxonomy 'area-atuacao'
+function bandeiragroup_register_area_atuacao_taxonomy() {
+    $labels = [
+        'name'              => _x( 'Áreas de Atuação', 'taxonomy general name', 'meu-tema' ),
+        'singular_name'     => _x( 'Área de Atuação', 'taxonomy singular name', 'meu-tema' ),
+        'search_items'      => __( 'Pesquisar Áreas de Atuação', 'meu-tema' ),
+        'all_items'         => __( 'Todas as Áreas de Atuação', 'meu-tema' ),
+        'parent_item'       => __( 'Área de Atuação Pai', 'meu-tema' ),
+        'parent_item_colon' => __( 'Área de Atuação Pai:', 'meu-tema' ),
+        'edit_item'         => __( 'Editar Área de Atuação', 'meu-tema' ),
+        'update_item'       => __( 'Atualizar Área de Atuação', 'meu-tema' ),
+        'add_new_item'      => __( 'Adicionar Nova Área de Atuação', 'meu-tema' ),
+        'new_item_name'     => __( 'Nome da Nova Área de Atuação', 'meu-tema' ),
+        'menu_name'         => __( 'Áreas de Atuação', 'meu-tema' ),
+    ];
+
+    $args = [
+        'hierarchical'      => true,
+        'labels'            => $labels,
+        'show_ui'           => true,
+        'show_admin_column' => true,
+        'query_var'         => true,
+        'rewrite'           => [ 'slug' => 'area-de-atuacao' ],
+        'show_in_rest'      => true,
+    ];
+
+    register_taxonomy( 'area-atuacao', [ 'portfolio' ], $args );
+}
+add_action( 'init', 'bandeiragroup_register_area_atuacao_taxonomy' );
+
+
+// Registra o metabox para os campos personalizados do Portfólio.
+function bandeiragroup_add_portfolio_metabox() {
+    add_meta_box(
+        'bandeiragroup_portfolio_fields',
+        'Informações do Portfólio',
+        'bandeiragroup_portfolio_metabox_html',
+        'portfolio',
+        'normal',
+        'high'
+    );
+}
+add_action( 'add_meta_boxes', 'bandeiragroup_add_portfolio_metabox' );
+
+
+// Renderiza o HTML do metabox.
+function bandeiragroup_portfolio_metabox_html( $post ) {
+    wp_nonce_field( 'bandeiragroup_save_portfolio_data', 'bandeiragroup_portfolio_nonce' );
+
+    $cliente = get_post_meta( $post->ID, '_bandeiragroup_cliente', true );
+    $marca_id = get_post_meta( $post->ID, '_bandeiragroup_marca_id', true );
+    $marca_url = wp_get_attachment_url( $marca_id );
+    ?>
+    <p>
+        <label for="bandeiragroup_cliente">Cliente:</label>
+        <br>
+        <input type="text" id="bandeiragroup_cliente" name="bandeiragroup_cliente" value="<?php echo esc_attr( $cliente ); ?>" class="regular-text">
+    </p>
+
+    <p>
+        <label for="bandeiragroup_marca_logo">Marca do Cliente:</label>
+        <br>
+        <div class="bandeiragroup-upload-container">
+            <input type="hidden" id="bandeiragroup_marca_id" name="bandeiragroup_marca_id" value="<?php echo esc_attr( $marca_id ); ?>" class="bandeiragroup-media-upload-id">
+            <button class="button bandeiragroup-media-upload-button">Selecionar Imagem</button>
+            <div class="bandeiragroup-preview-container">
+                <?php if ( $marca_url ) : ?>
+                    <img src="<?php echo esc_url( $marca_url ); ?>" style="max-width: 150px; height: auto; margin-top: 10px;">
+                <?php endif; ?>
+            </div>
+        </div>
+    </p>
+    <?php
+}
+
+
+// Salva os campos personalizados do Portfólio.
+function bandeiragroup_save_portfolio_data( $post_id ) {
+    if ( ! isset( $_POST['bandeiragroup_portfolio_nonce'] ) || ! wp_verify_nonce( $_POST['bandeiragroup_portfolio_nonce'], 'bandeiragroup_save_portfolio_data' ) ) {
+        return;
+    }
+
+    if ( ! current_user_can( 'edit_post', $post_id ) ) {
+        return;
+    }
+
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+        return;
+    }
+
+    if ( isset( $_POST['bandeiragroup_cliente'] ) ) {
+        $cliente = sanitize_text_field( $_POST['bandeiragroup_cliente'] );
+        update_post_meta( $post_id, '_bandeiragroup_cliente', $cliente );
+    }
+
+    if ( isset( $_POST['bandeiragroup_marca_id'] ) ) {
+        $marca_id = absint( $_POST['bandeiragroup_marca_id'] );
+        update_post_meta( $post_id, '_bandeiragroup_marca_id', $marca_id );
+    }
+}
+add_action( 'save_post', 'bandeiragroup_save_portfolio_data' );
+
+
+// Enfileira o script para o metabox do Portfólio.
+function bandeiragroup_enqueue_portfolio_media_script() {
+    $screen = get_current_screen();
+    if ( is_object( $screen ) && 'portfolio' === $screen->post_type ) {
+        wp_enqueue_media();
+        wp_enqueue_script(
+            'bandeiragroup-portfolio-media-uploader',
+            get_template_directory_uri() . '/assets/js/portfolio-media.js',
+            ['jquery'],
+            wp_get_theme()->get('Version'),
+            true
+        );
+    }
+}
+add_action( 'admin_enqueue_scripts', 'bandeiragroup_enqueue_portfolio_media_script' );
+
+// ====================================================================
+// END: CONFIGURAÇÃO DO PORTFÓLIO
+// ====================================================================
