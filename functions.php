@@ -229,6 +229,65 @@ function bandeiragroup_register_area_atuacao_taxonomy() {
 }
 add_action( 'init', 'bandeiragroup_register_area_atuacao_taxonomy' );
 
+// Registra a Custom Taxonomy 'recursos'
+function bandeiragroup_register_recursos_taxonomy() {
+    $labels = [
+        'name'              => _x( 'Recursos', 'taxonomy general name', 'meu-tema' ),
+        'singular_name'     => _x( 'Recurso', 'taxonomy singular name', 'meu-tema' ),
+        'search_items'      => __( 'Pesquisar Recursos', 'meu-tema' ),
+        'all_items'         => __( 'Todos os Recursos', 'meu-tema' ),
+        'parent_item'       => __( 'Recurso Pai', 'meu-tema' ),
+        'parent_item_colon' => __( 'Recurso Pai:', 'meu-tema' ),
+        'edit_item'         => __( 'Editar Recurso', 'meu-tema' ),
+        'update_item'       => __( 'Atualizar Recurso', 'meu-tema' ),
+        'add_new_item'      => __( 'Adicionar Novo Recurso', 'meu-tema' ),
+        'new_item_name'     => __( 'Nome do Novo Recurso', 'meu-tema' ),
+        'menu_name'         => __( 'Recursos', 'meu-tema' ),
+    ];
+
+    $args = [
+        'hierarchical'      => true, // Permite que se comporte como categorias
+        'labels'            => $labels,
+        'show_ui'           => true,
+        'show_admin_column' => true,
+        'query_var'         => true,
+        'rewrite'           => [ 'slug' => 'recurso' ],
+        'show_in_rest'      => true,
+    ];
+
+    // Conecta a taxonomia ao Custom Post Type 'portfolio'
+    register_taxonomy( 'recursos', [ 'portfolio' ], $args );
+}
+add_action( 'init', 'bandeiragroup_register_recursos_taxonomy' );
+/**
+ * Adiciona termos padrão na taxonomia 'recursos' na primeira ativação do tema.
+ */
+function bandeiragroup_set_default_portfolio_features() {
+    // Lista de recursos padrão
+    $features = [
+        'Certificado de Segurança SSL',
+        'Gerenciador de Conteúdo (CMS)',
+        'Hospedagem na Nuvem',
+        'Integração',
+        'Layout exclusivo',
+        'Responsivo, navegável em todos dispositivos',
+        'SEO Friendly',
+    ];
+    foreach ( $features as $feature ) {
+        // Verifica se o termo já existe para evitar duplicatas
+        if ( ! term_exists( $feature, 'recursos' ) ) {
+            wp_insert_term(
+                $feature,
+                'recursos',
+                [
+                    'slug' => sanitize_title( $feature )
+                ]
+            );
+        }
+    }
+}
+add_action( 'init', 'bandeiragroup_set_default_portfolio_features', 20 );
+
 
 // Registra o metabox para os campos personalizados do Portfólio.
 function bandeiragroup_add_portfolio_metabox() {
@@ -242,7 +301,6 @@ function bandeiragroup_add_portfolio_metabox() {
     );
 }
 add_action( 'add_meta_boxes', 'bandeiragroup_add_portfolio_metabox' );
-
 
 // Renderiza o HTML do metabox.
 function bandeiragroup_portfolio_metabox_html( $post ) {
