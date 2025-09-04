@@ -376,6 +376,21 @@ function bandeiragroup_enqueue_portfolio_media_script() {
 }
 add_action( 'admin_enqueue_scripts', 'bandeiragroup_enqueue_portfolio_media_script' );
 
+// Enfileira o script para monitorar o scroll na página single-portfolio.
+function bandeiragroup_enqueue_monitor_script() {
+    // Verifica se é a página de um único item de Portfólio.
+    if ( is_singular( 'portfolio' ) ) {
+        wp_enqueue_script(
+            'bandeiragroup-monitor-scroll',
+            get_template_directory_uri() . '/assets/js/monitor-scroll.js',
+            ['jquery'], // Dependência, já que o script usa jQuery
+            wp_get_theme()->get('Version'),
+            true
+        );
+    }
+}
+add_action( 'wp_enqueue_scripts', 'bandeiragroup_enqueue_monitor_script' );
+
 // ====================================================================
 // END: CONFIGURAÇÃO DO PORTFÓLIO
 // ====================================================================

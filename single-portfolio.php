@@ -44,8 +44,6 @@ get_header(); ?>
                         </div>
                     </div>
                 </div>
-
-
             </section>
 
             <section id="portfolio-details" class="portfolio-details">
@@ -63,68 +61,38 @@ get_header(); ?>
                 </div>
             </section>
 
-
-            <div class="portfolio-description mt-5">
-    <h3>Recursos do Projeto</h3>
-    <div class="row">
-    <?php
-    $recursos = get_the_terms( get_the_ID(), 'recursos' );
-    if ( ! empty( $recursos ) && ! is_wp_error( $recursos ) ) :
-        foreach ( $recursos as $recurso ) : ?>
-            <div class="col-12 col-md-6 col-lg-4 d-flex align-items-center mb-2">
-                <i class="bi bi-check2-all me-2" style="font-size: 1.2rem; color: var(--color-primary);"></i>
-                <span><?php echo esc_html( $recurso->name ); ?></span>
-            </div>
-        <?php endforeach;
-    endif; ?>
-    </div>
-</div>
-
-
-
             <section id="portfolio-features" class="portfolio-features section-bg">
                 <div class="container">
                     <div class="row mt-4">
-                        <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
-                            <div class="icon-box">
-                                <i class="bi bi-check2-all"></i>
-                                <span>Certificado de Segurança SSL</span>
+                        <?php
+                        $recursos = get_the_terms( get_the_ID(), 'recursos' );
+                        if ( ! empty( $recursos ) && ! is_wp_error( $recursos ) ) :
+                            foreach ( $recursos as $recurso ) : ?>
+                            <div class="col-lg-3 col-md-6 d-flex align-items-stretch mt-4 mt-md-0 mb-4 mt-md-0">
+                                <div class="icon-box">
+                                    <i class="bi bi-check2-all"></i>
+                                    <span><?php echo esc_html( $recurso->name ); ?></span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6 d-flex align-items-stretch mt-4 mt-md-0">
-                            <div class="icon-box">
-                                <i class="bi bi-check2-all"></i>
-                                <span>Gerenciador de Conteúdo (CMS)</span>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6 d-flex align-items-stretch mt-4 mt-lg-0">
-                            <div class="icon-box">
-                                <i class="bi bi-check2-all"></i>
-                                <span>Hospedagem na Nuvem</span>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6 d-flex align-items-stretch mt-4 mt-lg-0">
-                            <div class="icon-box">
-                                <i class="bi bi-check2-all"></i>
-                                <span>Integração</span>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6 d-flex align-items-stretch mt-4">
-                            <div class="icon-box">
-                                <i class="bi bi-check2-all"></i>
-                                <span>Layout exclusivo</span>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6 d-flex align-items-stretch mt-4">
-                            <div class="icon-box">
-                                <i class="bi bi-check2-all"></i>
-                                <span>Responsivo, navegável em todos dispositivos</span>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6 d-flex align-items-stretch mt-4">
-                            <div class="icon-box">
-                                <i class="bi bi-check2-all"></i>
-                                <span>SEO Friendly</span>
+                        <?php endforeach; endif; ?>
+                    </div>
+                </div>
+            </section>
+
+            <section class="">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Veja como ficou o projeto</h2>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col">
+                            <div class="monitor-container">
+                                <div class="monitor-screen">
+                                    <img src="<?php echo esc_url( get_template_directory_uri() . '/assets/img/portfolio/banews.jpg' ); ?>" alt="Visualização do Projeto" class="monitor-image">
+                                    <div class="monitor-scrollbar">
+                                        <div class="monitor-scroller"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
