@@ -1998,17 +1998,35 @@ section {
   }
 }
 
+/*--------------------------------------------------------------
+# Ajuste de layout para o grid do Portfólio (Altura Máxima)
+--------------------------------------------------------------*/
 .portfolio .portfolio-item {
   position: relative;
-  border: 1px solid var(--color-white);
+  /* Define uma altura máxima e fixa para a caixa */
+  height: 300px; 
+  max-height: 300px;
   overflow: hidden;
   z-index: 1;
 }
 
 .portfolio .portfolio-item img {
+  /* A imagem preenche o contêiner fixo */
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* **CRUCIAL**: Redimensiona e corta a imagem para preencher sem distorção */
   transition: all 0.3s;
 }
 
+/* Garante que o hover de zoom ainda funcione corretamente */
+.portfolio .portfolio-item:hover img {
+  transform: scale(1.2);
+}
+
+/* Garante que o hover de zoom ainda funcione corretamente */
+.portfolio .portfolio-item:hover img {
+  transform: scale(1.2);
+}
 .portfolio .portfolio-item:before {
   content: "";
   inset: 0;
@@ -2076,13 +2094,12 @@ section {
   inset: auto 10px 0 10px;
 }
 
-/* Novo estilo para a caixa da logo */
 .portfolio-item .portfolio-logo-box {
   position: absolute;
   top: 20px;
   right: 20px;
-  width: 100px;
-  height: 100px;
+  width: 150px;
+  height: 150px;
   background-color: var(--color-white);
   display: flex;
   align-items: center;
@@ -2098,9 +2115,10 @@ section {
   visibility: visible;
 }
 .portfolio-item .portfolio-logo-box img {
-  max-width: 100%;
-  max-height: 100%;
-  transition: all 0.3s ease-in-out;;
+  object-fit: contain; 
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s ease-in-out;
 }
 
 /*--------------------------------------------------------------
@@ -2557,6 +2575,7 @@ section {
   border-radius: 5px;
   will-change: transform;
 }
+
 /*--------------------------------------------------------------
 # Blog Stylings
 --------------------------------------------------------------*/

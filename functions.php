@@ -40,7 +40,27 @@ function bandeiragroup_setup() {
 add_action( 'after_setup_theme', 'bandeiragroup_setup' );
 
 
+// Garante que o WordPress não crie tamanhos de imagem padrão.
+function bandeiragroup_disable_big_image_scaling( $threshold ) {
+    return false; // Retornar `false` desativa o limite de tamanho.
+}
+add_filter( 'big_image_size_threshold', 'bandeiragroup_disable_big_image_scaling' );
 
+
+
+/**
+ * Enfileira scripts e estilos para o painel de administração.
+ */
+function bandeiragroup_enqueue_admin_assets() {
+    // Carrega o CSS do Bootstrap para o painel de administração
+    wp_enqueue_style( 
+        'bootstrap-admin-css', 
+        'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css', 
+        [], 
+        '5.3.2' 
+    );
+}
+add_action( 'admin_enqueue_scripts', 'bandeiragroup_enqueue_admin_assets' );
 
 
 /**
@@ -302,38 +322,66 @@ function bandeiragroup_add_portfolio_metabox() {
 }
 add_action( 'add_meta_boxes', 'bandeiragroup_add_portfolio_metabox' );
 
-// Renderiza o HTML do metabox.
+
+// Renderiza o HTML do metabox com layout em colunas.
 function bandeiragroup_portfolio_metabox_html( $post ) {
     wp_nonce_field( 'bandeiragroup_save_portfolio_data', 'bandeiragroup_portfolio_nonce' );
 
     $cliente = get_post_meta( $post->ID, '_bandeiragroup_cliente', true );
     $marca_id = get_post_meta( $post->ID, '_bandeiragroup_marca_id', true );
     $marca_url = wp_get_attachment_url( $marca_id );
+    $site_img_id = get_post_meta( $post->ID, '_bandeiragroup_site_img_id', true );
+    $site_img_url = wp_get_attachment_url( $site_img_id );
     ?>
-    <p>
-        <label for="bandeiragroup_cliente">Cliente:</label>
-        <br>
-        <input type="text" id="bandeiragroup_cliente" name="bandeiragroup_cliente" value="<?php echo esc_attr( $cliente ); ?>" class="regular-text">
-    </p>
+    
+    <div class="row">
 
-    <p>
-        <label for="bandeiragroup_marca_logo">Marca do Cliente:</label>
-        <br>
-        <div class="bandeiragroup-upload-container">
-            <input type="hidden" id="bandeiragroup_marca_id" name="bandeiragroup_marca_id" value="<?php echo esc_attr( $marca_id ); ?>" class="bandeiragroup-media-upload-id">
-            <button class="button bandeiragroup-media-upload-button">Selecionar Imagem</button>
-            <div class="bandeiragroup-preview-container">
-                <?php if ( $marca_url ) : ?>
-                    <img src="<?php echo esc_url( $marca_url ); ?>" style="max-width: 150px; height: auto; margin-top: 10px;">
-                <?php endif; ?>
-            </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+            <p>
+                <label for="bandeiragroup_cliente">Cliente:</label>
+                <br>
+                <br>
+                <input type="text" id="bandeiragroup_cliente" name="bandeiragroup_cliente" value="<?php echo esc_attr( $cliente ); ?>" class="regular-text">
+            </p>
         </div>
-    </p>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <p>
+                <label for="bandeiragroup_marca_logo">Marca do Cliente:</label>
+                <br>
+                <div class="bandeiragroup-upload-container">
+                    <input type="hidden" id="bandeiragroup_marca_id" name="bandeiragroup_marca_id" value="<?php echo esc_attr( $marca_id ); ?>" class="bandeiragroup-media-upload-id">
+                    <button class="button bandeiragroup-media-upload-button">Selecionar Imagem</button>
+                    <div class="bandeiragroup-preview-container">
+                        <?php if ( $marca_url ) : ?>
+                            <img src="<?php echo esc_url( $marca_url ); ?>" style="max-width: 300px; height: auto; margin-top: 10px;">
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </p>
+        </div>
+
+        <div class="col-lg-4 col-md-12 mb-4">
+            <p>
+                <label for="bandeiragroup_site_img">Imagem do Site:</label>
+                <br>
+                <div class="bandeiragroup-upload-container">
+                    <input type="hidden" id="bandeiragroup_site_img_id" name="bandeiragroup_site_img_id" value="<?php echo esc_attr( $site_img_id ); ?>" class="bandeiragroup-media-upload-id">
+                    <button class="button bandeiragroup-media-upload-button">Selecionar Imagem do Site</button>
+                    <div class="bandeiragroup-preview-container">
+                        <?php if ( $site_img_url ) : ?>
+                            <img src="<?php echo esc_url( $site_img_url ); ?>" style="max-width: 100%; height: auto; margin-top: 10px;">
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </p>
+        </div>
+
+    </div>
     <?php
 }
 
-
-// Salva os campos personalizados do Portfólio.
+// Salva os campos personalizados, incluindo o novo campo para a imagem do site.
 function bandeiragroup_save_portfolio_data( $post_id ) {
     if ( ! isset( $_POST['bandeiragroup_portfolio_nonce'] ) || ! wp_verify_nonce( $_POST['bandeiragroup_portfolio_nonce'], 'bandeiragroup_save_portfolio_data' ) ) {
         return;
@@ -356,9 +404,14 @@ function bandeiragroup_save_portfolio_data( $post_id ) {
         $marca_id = absint( $_POST['bandeiragroup_marca_id'] );
         update_post_meta( $post_id, '_bandeiragroup_marca_id', $marca_id );
     }
+
+    // Salva o novo campo 'Imagem do Site' (ID da imagem)
+    if ( isset( $_POST['bandeiragroup_site_img_id'] ) ) {
+        $site_img_id = absint( $_POST['bandeiragroup_site_img_id'] );
+        update_post_meta( $post_id, '_bandeiragroup_site_img_id', $site_img_id );
+    }
 }
 add_action( 'save_post', 'bandeiragroup_save_portfolio_data' );
-
 
 // Enfileira o script para o metabox do Portfólio.
 function bandeiragroup_enqueue_portfolio_media_script() {
@@ -390,6 +443,36 @@ function bandeiragroup_enqueue_monitor_script() {
     }
 }
 add_action( 'wp_enqueue_scripts', 'bandeiragroup_enqueue_monitor_script' );
+
+/**
+ * Adiciona a coluna 'Cliente' à listagem de Portfólio no painel de administração.
+ */
+function bandeiragroup_add_portfolio_cliente_column($columns) {
+    // Adiciona a nova coluna 'Cliente' depois da coluna 'title'
+    $new_columns = array();
+    foreach ($columns as $key => $value) {
+        $new_columns[$key] = $value;
+        if ('title' === $key) {
+            $new_columns['cliente'] = __('Cliente', 'meu-tema');
+        }
+    }
+    return $new_columns;
+}
+add_filter('manage_portfolio_posts_columns', 'bandeiragroup_add_portfolio_cliente_column');
+
+
+/**
+ * Preenche o conteúdo da nova coluna 'Cliente'.
+ */
+function bandeiragroup_portfolio_custom_column_content($column, $post_id) {
+    switch ($column) {
+        case 'cliente':
+            $cliente = get_post_meta($post_id, '_bandeiragroup_cliente', true);
+            echo esc_html($cliente);
+            break;
+    }
+}
+add_action('manage_portfolio_posts_custom_column', 'bandeiragroup_portfolio_custom_column_content', 10, 2);
 
 // ====================================================================
 // END: CONFIGURAÇÃO DO PORTFÓLIO

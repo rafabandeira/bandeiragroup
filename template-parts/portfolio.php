@@ -19,7 +19,7 @@
                 // Busca todas as 'Áreas de Atuação' (taxonomia)
                 $areas = get_terms([
                     'taxonomy'   => 'area-atuacao',
-                    'hide_empty' => false,
+                    'hide_empty' => true, // Exibe apenas categorias com posts
                 ]);
 
                 // Exibe os filtros de categoria
@@ -29,7 +29,8 @@
                     }
                 }
                 ?>
-            </ul><div class="row g-0 portfolio-container">
+            </ul>
+            <div class="row g-0 portfolio-container">
 
                 <?php
                   // O loop do WordPress para o nosso Custom Post Type
@@ -56,20 +57,19 @@
                           $marca_id = get_post_meta(get_the_ID(), '_bandeiragroup_marca_id', true);
                           $marca_url = $marca_id ? wp_get_attachment_url($marca_id) : '';
                   ?>
-                  <div class="col-xl-3 col-lg-4 col-md-6 portfolio-item <?php echo esc_attr($classes); ?>">
+                  <a href="<?php the_permalink(); ?>" title="Ver Detalhes"><div class="col-xl-3 col-lg-4 col-md-6 portfolio-item <?php echo esc_attr($classes); ?>">
                       <img src="<?php echo esc_url(get_the_post_thumbnail_url(get_the_ID(), 'full')); ?>" class="img-fluid" alt="<?php echo esc_attr(get_the_title()); ?>">
                       <div class="portfolio-info">
                           <h3><?php echo esc_html(get_the_title()); ?></h3>
                           <p><?php echo esc_html($cliente); ?></p>
-                          <a href="<?php echo esc_url(get_the_post_thumbnail_url(get_the_ID(), 'full')); ?>" title="<?php echo esc_attr(get_the_title()); ?>" data-gallery="portfolio-gallery" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                          <a href="<?php the_permalink(); ?>" title="Ver Detalhes" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                          
                       </div>
                       <?php if ($marca_url) : ?>
                           <div class="portfolio-logo-box">
                               <img src="<?php echo esc_url($marca_url); ?>" alt="Logo <?php echo esc_attr($cliente); ?>">
                           </div>
                       <?php endif; ?>
-                  </div>
+                  </div></a>
                   <?php
                     endwhile;
                     wp_reset_postdata(); // Restaura os dados globais do post

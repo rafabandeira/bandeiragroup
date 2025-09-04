@@ -61,6 +61,39 @@ get_header(); ?>
                 </div>
             </section>
 
+            <section class="">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Veja como ficou o projeto</h2>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col">
+                            <?php 
+                            // Busca o ID da imagem do site que foi salva
+                            $site_img_id = get_post_meta( get_the_ID(), '_bandeiragroup_site_img_id', true );
+                            $site_img_url = wp_get_attachment_url( $site_img_id );
+
+                            // Se a imagem do site foi cadastrada, exibe-a dentro do monitor
+                            if ( $site_img_url ) : ?>
+                                <div class="monitor-container">
+                                    <div class="monitor-screen">
+                                        <img src="<?php echo esc_url( $site_img_url ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?> | Visualização do Site" class="monitor-image">
+                                        <div class="monitor-scrollbar">
+                                            <div class="monitor-scroller"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php 
+                            // Caso contrário, exibe a imagem destacada como fallback
+                            else :
+                                the_post_thumbnail( 'full', ['class' => 'img-fluid'] ); 
+                            endif;
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <section id="portfolio-features" class="portfolio-features section-bg">
                 <div class="container">
                     <div class="row mt-4">
@@ -79,27 +112,19 @@ get_header(); ?>
                 </div>
             </section>
 
-            <section class="">
-                <div class="container">
-                    <div class="section-header">
-                        <h2>Veja como ficou o projeto</h2>
-                    </div>
-                    <div class="row justify-content-center">
-                        <div class="col">
-                            <div class="monitor-container">
-                                <div class="monitor-screen">
-                                    <img src="<?php echo esc_url( get_template_directory_uri() . '/assets/img/portfolio/banews.jpg' ); ?>" alt="Visualização do Projeto" class="monitor-image">
-                                    <div class="monitor-scrollbar">
-                                        <div class="monitor-scroller"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
             
         <?php endwhile; ?>
     <?php endif; ?>
+
+    <section id="cta" class="cta">
+    <div class="container" data-aos="zoom-out">
+        <div class="row g-5">
+            <div class="col content">
+                <h3>Agende uma avaliação <em>gratuita!</em></h3>
+                <a class="cta-btn align-self-start" href="<?php echo esc_url( home_url( '/contato' ) ); ?>"> Converse com um especialista agora <i class="bi bi-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+</section>
 
 </main><?php get_footer(); ?>

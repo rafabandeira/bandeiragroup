@@ -20,11 +20,11 @@
             
             <nav id="navbar" class="navbar">
                 <ul>
-                    <li><a class="d-none nav-link scrollto" href="index.html#quemsomos">Quem Somos</a></li>
-                    <li><a class="nav-link scrollto" href="index.html#servicos">Serviços</a></li>
-                    <li><a class="nav-link scrollto" href="index.html#portfolio">Portfolio</a></li>
-                    <li><a class="nav-link scrollto d-none" href="index.html#blog">Blog</a></li>
-                    <li><a class="nav-link scrollto" href="index.html#contato">Contato</a></li>
+                    <li><a class="d-none nav-link scrollto" href="<?php echo esc_url( home_url( '/' ) ); ?>#quemsomos">Quem Somos</a></li>
+                    <li><a class="nav-link scrollto" href="<?php echo esc_url( home_url( '/' ) ); ?>#servicos">Serviços</a></li>
+                    <li><a class="nav-link scrollto" href="<?php echo esc_url( home_url( '/' ) ); ?>#portfolio">Portfolio</a></li>
+                    <li><a class="nav-link scrollto d-none" href="<?php echo esc_url( home_url( '/' ) ); ?>#blog">Blog</a></li>
+                    <li><a class="nav-link scrollto" href="<?php echo esc_url( home_url( '/' ) ); ?>#contato">Contato</a></li>
                 </ul>
                 <i class="bi bi-list mobile-nav-toggle d-none"></i>
             </nav><a class="btn-getstarted scrollto" href="https://wa.me/5571991438900" target="_blank">Orçamento</a>
