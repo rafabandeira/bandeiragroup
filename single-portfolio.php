@@ -15,21 +15,43 @@ get_header(); ?>
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <?php 
-                                // Busca os campos personalizados
-                                $cliente = get_post_meta( get_the_ID(), '_bandeiragroup_cliente', true );
+                                // Busca os campos personalizados do novo metabox
                                 $marca_id = get_post_meta( get_the_ID(), '_bandeiragroup_marca_id', true );
                                 $marca_url = wp_get_attachment_url( $marca_id );
-                                // Busca as Áreas de Atuação
-                                $terms = get_the_terms( get_the_ID(), 'area-atuacao' );
+                                
+                                // Busca a nova taxonomia 'tipo-portfolio'
+                                $tipos_portfolio = get_the_terms( get_the_ID(), 'tipo-portfolio' );
+                                $formatted_types = '';
+
+                                if ( ! empty( $tipos_portfolio ) && ! is_wp_error( $tipos_portfolio ) ) {
+                                    $term_names = array();
+                                    foreach ($tipos_portfolio as $tipo) {
+                                        $term_names[] = esc_html($tipo->name);
+                                    }
+
+                                    $count = count($term_names);
+                                    if ($count === 1) {
+                                        $formatted_types = $term_names[0];
+                                    } elseif ($count === 2) {
+                                        $formatted_types = implode(' e ', $term_names);
+                                    } else {
+                                        $last_term = array_pop($term_names);
+                                        $formatted_types = implode(', ', $term_names) . ' e ' . $last_term;
+                                    }
+                                }
                             ?>
-                            <h2><?php the_title(); ?></h2>
-                            <?php if ( $cliente ) : ?>
-                                <p>Cliente: <span><?php echo esc_html( $cliente ); ?></span></p>
+                            <?php if ( ! empty( $formatted_types ) ) : ?>
+                                <h2><?php echo $formatted_types; ?></h2>
                             <?php endif; ?>
-                            <?php if ( $cliente ) : ?>
+                            <p>Cliente: <span><?php the_title(); ?></span></p>
+                            <?php 
+                                // Busca as Áreas de Atuação
+                                $area_atuacao = get_the_terms( get_the_ID(), 'area-atuacao' );
+                            ?>
+                            <?php if ( ! empty( $area_atuacao ) && ! is_wp_error( $area_atuacao ) ) : ?>
                                 <p>Área de Atuação: <span>
                                 <?php 
-                                    $term_names = array_column( $terms, 'name' );
+                                    $term_names = array_column( $area_atuacao, 'name' );
                                     echo esc_html( implode( ', ', $term_names ) ); 
                                 ?>
                                 </span></p>
@@ -38,7 +60,7 @@ get_header(); ?>
                         <div>
                             <?php if ($marca_url) : ?>
                                 <div class="breadcrumbs-logo-box">
-                                    <img src="<?php echo esc_url($marca_url); ?>" alt="Logo <?php echo esc_attr($cliente); ?>">
+                                    <img src="<?php echo esc_url($marca_url); ?>" alt="Logo <?php echo esc_attr(get_the_title()); ?>">
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -120,7 +142,7 @@ get_header(); ?>
     <div class="container" data-aos="zoom-out">
         <div class="row g-5">
             <div class="col content">
-                <h3>Agende uma avaliação <em>gratuita!</em></h3>
+                <h3>Agende uma avaliação <em>gratuita</em></h3>
                 <a class="cta-btn align-self-start" href="<?php echo esc_url( home_url( '/contato' ) ); ?>"> Converse com um especialista agora <i class="bi bi-arrow-right"></i></a>
             </div>
         </div>

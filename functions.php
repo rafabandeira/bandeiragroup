@@ -266,7 +266,7 @@ function bandeiragroup_register_recursos_taxonomy() {
     ];
 
     $args = [
-        'hierarchical'      => true, // Permite que se comporte como categorias
+        'hierarchical'      => true,
         'labels'            => $labels,
         'show_ui'           => true,
         'show_admin_column' => true,
@@ -275,15 +275,14 @@ function bandeiragroup_register_recursos_taxonomy() {
         'show_in_rest'      => true,
     ];
 
-    // Conecta a taxonomia ao Custom Post Type 'portfolio'
     register_taxonomy( 'recursos', [ 'portfolio' ], $args );
 }
 add_action( 'init', 'bandeiragroup_register_recursos_taxonomy' );
+
 /**
  * Adiciona termos padrão na taxonomia 'recursos' na primeira ativação do tema.
  */
 function bandeiragroup_set_default_portfolio_features() {
-    // Lista de recursos padrão
     $features = [
         'Certificado de Segurança SSL',
         'Gerenciador de Conteúdo (CMS)',
@@ -294,7 +293,6 @@ function bandeiragroup_set_default_portfolio_features() {
         'SEO Friendly',
     ];
     foreach ( $features as $feature ) {
-        // Verifica se o termo já existe para evitar duplicatas
         if ( ! term_exists( $feature, 'recursos' ) ) {
             wp_insert_term(
                 $feature,
@@ -308,26 +306,77 @@ function bandeiragroup_set_default_portfolio_features() {
 }
 add_action( 'init', 'bandeiragroup_set_default_portfolio_features', 20 );
 
+/**
+ * Registra a nova taxonomia 'tipo-portfolio'.
+ */
+function bandeiragroup_register_portfolio_type_taxonomy() {
+    $labels = array(
+        'name'                       => _x( 'Tipos de Portfólio', 'Taxonomy General Name', 'meu-tema' ),
+        'singular_name'              => _x( 'Tipo de Portfólio', 'Taxonomy Singular Name', 'meu-tema' ),
+        'menu_name'                  => __( 'Tipos', 'meu-tema' ),
+        'all_items'                  => __( 'Todos os Tipos', 'meu-tema' ),
+        'parent_item'                => __( 'Tipo Pai', 'meu-tema' ),
+        'parent_item_colon'          => __( 'Tipo Pai:', 'meu-tema' ),
+        'new_item_name'              => __( 'Novo Tipo', 'meu-tema' ),
+        'add_new_item'               => __( 'Adicionar Novo Tipo', 'meu-tema' ),
+        'edit_item'                  => __( 'Editar Tipo', 'meu-tema' ),
+        'update_item'                => __( 'Atualizar Tipo', 'meu-tema' ),
+        'view_item'                  => __( 'Ver Tipo', 'meu-tema' ),
+        'separate_items_with_commas' => __( 'Separar tipos com vírgulas', 'meu-tema' ),
+        'add_or_remove_items'        => __( 'Adicionar ou remover tipos', 'meu-tema' ),
+        'choose_from_most_used'      => __( 'Escolher entre os mais usados', 'meu-tema' ),
+        'popular_items'              => __( 'Tipos Populares', 'meu-tema' ),
+        'search_items'               => __( 'Pesquisar Tipos', 'meu-tema' ),
+        'not_found'                  => __( 'Nenhum tipo encontrado', 'meu-tema' ),
+        'no_terms'                   => __( 'Nenhum tipo', 'meu-tema' ),
+        'items_list'                 => __( 'Lista de Tipos', 'meu-tema' ),
+        'items_list_navigation'      => __( 'Navegação da lista de tipos', 'meu-tema' ),
+    );
+    $args = array(
+        'labels'                     => $labels,
+        'hierarchical'               => true,
+        'public'                     => true,
+        'show_ui'                    => true,
+        'show_admin_column'          => true,
+        'show_in_nav_menus'          => true,
+        'show_tagcloud'              => false,
+        'show_in_rest'               => true, // Adicione esta linha!
+    );
+    register_taxonomy( 'tipo-portfolio', array( 'portfolio' ), $args );
+}
+add_action( 'init', 'bandeiragroup_register_portfolio_type_taxonomy' );
 
-// Registra o metabox para os campos personalizados do Portfólio.
-function bandeiragroup_add_portfolio_metabox() {
+/**
+ * Adiciona termos padrão na nova taxonomia.
+ */
+function bandeiragroup_add_default_portfolio_types() {
+    $types = [ 'Website', 'Marca', 'Midias Sociais' ];
+    foreach ( $types as $type ) {
+        if ( ! term_exists( $type, 'tipo-portfolio' ) ) {
+            wp_insert_term( $type, 'tipo-portfolio' );
+        }
+    }
+}
+add_action( 'init', 'bandeiragroup_add_default_portfolio_types', 20 );
+
+// Registra um novo metabox para os campos de mídia
+function bandeiragroup_add_portfolio_media_metabox() {
     add_meta_box(
-        'bandeiragroup_portfolio_fields',
-        'Informações do Portfólio',
-        'bandeiragroup_portfolio_metabox_html',
+        'bandeiragroup_portfolio_media',
+        'Mídia do Portfólio',
+        'bandeiragroup_portfolio_media_html',
         'portfolio',
         'normal',
         'high'
     );
 }
-add_action( 'add_meta_boxes', 'bandeiragroup_add_portfolio_metabox' );
+add_action( 'add_meta_boxes', 'bandeiragroup_add_portfolio_media_metabox' );
 
 
-// Renderiza o HTML do metabox com layout em colunas.
-function bandeiragroup_portfolio_metabox_html( $post ) {
+// Renderiza o HTML para o novo metabox de mídia
+function bandeiragroup_portfolio_media_html( $post ) {
     wp_nonce_field( 'bandeiragroup_save_portfolio_data', 'bandeiragroup_portfolio_nonce' );
 
-    $cliente = get_post_meta( $post->ID, '_bandeiragroup_cliente', true );
     $marca_id = get_post_meta( $post->ID, '_bandeiragroup_marca_id', true );
     $marca_url = wp_get_attachment_url( $marca_id );
     $site_img_id = get_post_meta( $post->ID, '_bandeiragroup_site_img_id', true );
@@ -335,23 +384,13 @@ function bandeiragroup_portfolio_metabox_html( $post ) {
     ?>
     
     <div class="row">
-
-        <div class="col-lg-4 col-md-6 mb-4">
-            <p>
-                <label for="bandeiragroup_cliente">Cliente:</label>
-                <br>
-                <br>
-                <input type="text" id="bandeiragroup_cliente" name="bandeiragroup_cliente" value="<?php echo esc_attr( $cliente ); ?>" class="regular-text">
-            </p>
-        </div>
-
-        <div class="col-lg-4 col-md-6 mb-4">
+        <div class="col-lg-6 col-md-6 mb-4">
             <p>
                 <label for="bandeiragroup_marca_logo">Marca do Cliente:</label>
                 <br>
                 <div class="bandeiragroup-upload-container">
                     <input type="hidden" id="bandeiragroup_marca_id" name="bandeiragroup_marca_id" value="<?php echo esc_attr( $marca_id ); ?>" class="bandeiragroup-media-upload-id">
-                    <button class="button bandeiragroup-media-upload-button">Selecionar Imagem</button>
+                    <button class="button bandeiragroup-media-upload-button">Selecionar Marca</button>
                     <div class="bandeiragroup-preview-container">
                         <?php if ( $marca_url ) : ?>
                             <img src="<?php echo esc_url( $marca_url ); ?>" style="max-width: 300px; height: auto; margin-top: 10px;">
@@ -361,7 +400,7 @@ function bandeiragroup_portfolio_metabox_html( $post ) {
             </p>
         </div>
 
-        <div class="col-lg-4 col-md-12 mb-4">
+        <div class="col-lg-6 col-md-6 mb-4">
             <p>
                 <label for="bandeiragroup_site_img">Imagem do Site:</label>
                 <br>
@@ -376,13 +415,13 @@ function bandeiragroup_portfolio_metabox_html( $post ) {
                 </div>
             </p>
         </div>
-
     </div>
     <?php
 }
 
-// Salva os campos personalizados, incluindo o novo campo para a imagem do site.
-function bandeiragroup_save_portfolio_data( $post_id ) {
+
+// Salva os campos personalizados do novo metabox
+function bandeiragroup_save_portfolio_media_data( $post_id ) {
     if ( ! isset( $_POST['bandeiragroup_portfolio_nonce'] ) || ! wp_verify_nonce( $_POST['bandeiragroup_portfolio_nonce'], 'bandeiragroup_save_portfolio_data' ) ) {
         return;
     }
@@ -395,23 +434,20 @@ function bandeiragroup_save_portfolio_data( $post_id ) {
         return;
     }
 
-    if ( isset( $_POST['bandeiragroup_cliente'] ) ) {
-        $cliente = sanitize_text_field( $_POST['bandeiragroup_cliente'] );
-        update_post_meta( $post_id, '_bandeiragroup_cliente', $cliente );
-    }
-
+    // Salva o ID da imagem da marca
     if ( isset( $_POST['bandeiragroup_marca_id'] ) ) {
         $marca_id = absint( $_POST['bandeiragroup_marca_id'] );
         update_post_meta( $post_id, '_bandeiragroup_marca_id', $marca_id );
     }
 
-    // Salva o novo campo 'Imagem do Site' (ID da imagem)
+    // Salva o ID da imagem do site
     if ( isset( $_POST['bandeiragroup_site_img_id'] ) ) {
         $site_img_id = absint( $_POST['bandeiragroup_site_img_id'] );
         update_post_meta( $post_id, '_bandeiragroup_site_img_id', $site_img_id );
     }
 }
-add_action( 'save_post', 'bandeiragroup_save_portfolio_data' );
+add_action( 'save_post', 'bandeiragroup_save_portfolio_media_data' );
+
 
 // Enfileira o script para o metabox do Portfólio.
 function bandeiragroup_enqueue_portfolio_media_script() {
@@ -429,14 +465,14 @@ function bandeiragroup_enqueue_portfolio_media_script() {
 }
 add_action( 'admin_enqueue_scripts', 'bandeiragroup_enqueue_portfolio_media_script' );
 
+
 // Enfileira o script para monitorar o scroll na página single-portfolio.
 function bandeiragroup_enqueue_monitor_script() {
-    // Verifica se é a página de um único item de Portfólio.
     if ( is_singular( 'portfolio' ) ) {
         wp_enqueue_script(
             'bandeiragroup-monitor-scroll',
             get_template_directory_uri() . '/assets/js/monitor-scroll.js',
-            ['jquery'], // Dependência, já que o script usa jQuery
+            ['jquery'],
             wp_get_theme()->get('Version'),
             true
         );
@@ -444,35 +480,45 @@ function bandeiragroup_enqueue_monitor_script() {
 }
 add_action( 'wp_enqueue_scripts', 'bandeiragroup_enqueue_monitor_script' );
 
-/**
- * Adiciona a coluna 'Cliente' à listagem de Portfólio no painel de administração.
- */
-function bandeiragroup_add_portfolio_cliente_column($columns) {
-    // Adiciona a nova coluna 'Cliente' depois da coluna 'title'
-    $new_columns = array();
-    foreach ($columns as $key => $value) {
-        $new_columns[$key] = $value;
-        if ('title' === $key) {
-            $new_columns['cliente'] = __('Cliente', 'meu-tema');
-        }
-    }
-    return $new_columns;
+// Adiciona o metabox para o banner inicial.
+function bandeiragroup_add_sticky_metabox() {
+    add_meta_box(
+        'bandeiragroup_sticky_info',
+        'Fixar no Hero',
+        'bandeiragroup_sticky_info_html',
+        'portfolio',
+        'side',
+        'high'
+    );
 }
-add_filter('manage_portfolio_posts_columns', 'bandeiragroup_add_portfolio_cliente_column');
+add_action( 'add_meta_boxes', 'bandeiragroup_add_sticky_metabox' );
 
-
-/**
- * Preenche o conteúdo da nova coluna 'Cliente'.
- */
-function bandeiragroup_portfolio_custom_column_content($column, $post_id) {
-    switch ($column) {
-        case 'cliente':
-            $cliente = get_post_meta($post_id, '_bandeiragroup_cliente', true);
-            echo esc_html($cliente);
-            break;
-    }
+// HTML do metabox.
+function bandeiragroup_sticky_info_html( $post ) {
+    wp_nonce_field( 'bandeiragroup_save_sticky_data', 'bandeiragroup_sticky_nonce' );
+    $is_sticky = get_post_meta( $post->ID, '_bandeiragroup_is_sticky', true );
+    ?>
+    <p>
+        <label for="bandeiragroup_is_sticky">
+            <input type="checkbox" id="bandeiragroup_is_sticky" name="bandeiragroup_is_sticky" value="1" <?php checked( $is_sticky, '1' ); ?>>
+            Fixar no Hero.
+        </label>
+    </p>
+    <?php
 }
-add_action('manage_portfolio_posts_custom_column', 'bandeiragroup_portfolio_custom_column_content', 10, 2);
+
+// Salva o status fixo do post.
+function bandeiragroup_save_sticky_data( $post_id ) {
+    if ( ! isset( $_POST['bandeiragroup_sticky_nonce'] ) || ! wp_verify_nonce( $_POST['bandeiragroup_sticky_nonce'], 'bandeiragroup_save_sticky_data' ) ) {
+        return;
+    }
+    if ( ! current_user_can( 'edit_post', $post_id ) ) {
+        return;
+    }
+    $is_sticky_value = isset( $_POST['bandeiragroup_is_sticky'] ) ? 1 : 0;
+    update_post_meta( $post_id, '_bandeiragroup_is_sticky', $is_sticky_value );
+}
+add_action( 'save_post', 'bandeiragroup_save_sticky_data' );
 
 // ====================================================================
 // END: CONFIGURAÇÃO DO PORTFÓLIO

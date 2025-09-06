@@ -53,20 +53,43 @@
                           }
 
                           // Busca os campos personalizados
-                          $cliente = get_post_meta(get_the_ID(), '_bandeiragroup_cliente', true);
                           $marca_id = get_post_meta(get_the_ID(), '_bandeiragroup_marca_id', true);
                           $marca_url = $marca_id ? wp_get_attachment_url($marca_id) : '';
                   ?>
                   <a href="<?php the_permalink(); ?>" title="Ver Detalhes"><div class="col-xl-3 col-lg-4 col-md-6 portfolio-item <?php echo esc_attr($classes); ?>">
                       <img src="<?php echo esc_url(get_the_post_thumbnail_url(get_the_ID(), 'full')); ?>" class="img-fluid" alt="<?php echo esc_attr(get_the_title()); ?>">
                       <div class="portfolio-info">
-                          <h3><?php echo esc_html(get_the_title()); ?></h3>
-                          <p><?php echo esc_html($cliente); ?></p>
+                          <h3>
+                            <?php
+                              $terms = get_the_terms(get_the_ID(), 'tipo-portfolio');
+                              // Verifica se há termos e se não houve erro.
+                              if (!empty($terms) && !is_wp_error($terms)) {
+                                  // Cria um array para armazenar os nomes dos termos.
+                                  $term_names = array();
+                                  foreach ($terms as $term) {
+                                      $term_names[] = esc_html($term->name);
+                                  }
+                                  // Cria a string formatada com vírgulas e 'e'.
+                                  $formatted_string = '';
+                                  $count = count($term_names);
+                                  if ($count === 1) {
+                                      $formatted_string = $term_names[0];
+                                  } elseif ($count === 2) {
+                                      $formatted_string = implode(' e ', $term_names);
+                                  } else {
+                                      $last_term = array_pop($term_names);
+                                      $formatted_string = implode(', ', $term_names) . ' e ' . $last_term;
+                                  }
+                                  echo $formatted_string;
+                              }
+                            ?>  
+                          </h3>
+                          <p><?php echo esc_html(get_the_title()); ?></p>
                           
                       </div>
                       <?php if ($marca_url) : ?>
                           <div class="portfolio-logo-box">
-                              <img src="<?php echo esc_url($marca_url); ?>" alt="Logo <?php echo esc_attr($cliente); ?>">
+                              <img src="<?php echo esc_url($marca_url); ?>" alt="Logo <?php echo esc_html(get_the_title()); ?>">
                           </div>
                       <?php endif; ?>
                   </div></a>

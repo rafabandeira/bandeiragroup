@@ -887,17 +887,28 @@ section {
 .hero-fullscreen {
   width: 100%;
   min-height: 100vh;
-  background: url("../img/hero-fullscreen-bg.jpg") center center;
+  /* Garante que a imagem de fundo ocupe toda a seção */
   background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
   position: relative;
   padding: 120px 0 60px;
 }
 
 .hero-fullscreen:before {
   content: "";
+  /* Este é o overlay semi-transparente ("marca d'água") */
   background: rgba(var(--color-white-rgb), 0.85);
   position: absolute;
   inset: 0;
+}
+
+.hero-fullscreen .swiper-slide {
+    height: 100vh;
+}
+
+.hero-fullscreen .container {
+    min-height: 100vh;
 }
 
 @media (min-width: 1365px) {
@@ -941,29 +952,11 @@ section {
   background: rgba(var(--color-primary-rgb), 0.8);
 }
 
-.hero-fullscreen .btn-watch-video {
-  font-size: 16px;
-  transition: 0.5s;
-  margin-left: 25px;
-  font-family: var(--font-secondary);
-  color: var(--color-secondary);
-  font-weight: 600;
-}
-
-.hero-fullscreen .btn-watch-video i {
-  color: var(--color-primary);
-  font-size: 32px;
-  transition: 0.3s;
-  line-height: 0;
-  margin-right: 8px;
-}
-
-.hero-fullscreen .btn-watch-video:hover {
-  color: var(--color-primary);
-}
-
-.hero-fullscreen .btn-watch-video:hover i {
-  color: rgba(var(--color-primary-rgb), 0.8);
+.hero-client-logo {
+    max-width: 200px;
+    height: auto;
+    margin-bottom: 20px;
+    filter: brightness(0) invert(1);
 }
 
 @media (max-width: 640px) {
@@ -976,8 +969,7 @@ section {
     margin-bottom: 30px;
   }
 
-  .hero-fullscreen .btn-get-started,
-  .hero-fullscreen .btn-watch-video {
+  .hero-fullscreen .btn-get-started, .hero-fullscreen .btn-watch-video {
     font-size: 14px;
   }
 }
