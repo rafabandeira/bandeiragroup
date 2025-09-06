@@ -8,9 +8,8 @@ function bandeiragroup_scripts() {
     wp_enqueue_style( 'aos-css', get_template_directory_uri() . '/assets/vendor/aos/aos.css', [], '2.3.1' );
     wp_enqueue_style( 'glightbox-css', get_template_directory_uri() . '/assets/vendor/glightbox/css/glightbox.min.css', [], '3.2.0' );
     wp_enqueue_style( 'swiper-css', get_template_directory_uri() . '/assets/vendor/swiper/swiper-bundle.min.css', [], '8.4.5' );
-    wp_enqueue_style( 'variables-css', get_template_directory_uri() . '/assets/css/variables.css', [], wp_get_theme()->get('Version') );
-    wp_enqueue_style( 'variables-green-css', get_template_directory_uri() . '/assets/css/variables-green.css', ['variables-css'], wp_get_theme()->get('Version') );
-    wp_enqueue_style( 'bandeiragroup-style', get_template_directory_uri() . '/assets/css/main.css', ['bootstrap-css'], wp_get_theme()->get('Version') );
+    wp_enqueue_style( 'variables-green-css', get_template_directory_uri() . '/assets/css/variables-green.css', [], wp_get_theme()->get('Version') );
+    wp_enqueue_style( 'main', get_template_directory_uri() . '/assets/css/main.css', [], wp_get_theme()->get('Version') );
     
     // Enfileira os scripts
     wp_enqueue_script( 'bootstrap-bundle', get_template_directory_uri() . '/assets/vendor/bootstrap/js/bootstrap.bundle.min.js', ['jquery'], '5.3.2', true );
@@ -74,7 +73,7 @@ function bandeiragroup_register_contact_options_page() {
         'bandeiragroup-contact-settings', // Slug do menu
         'bandeiragroup_contact_options_page_html', // Função que renderiza o HTML da página
         'dashicons-phone', // Ícone do menu
-        60 // Posição do menu
+        4 // Posição do menu
     );
 }
 add_action( 'admin_menu', 'bandeiragroup_register_contact_options_page' );

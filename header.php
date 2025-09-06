@@ -22,8 +22,25 @@
                 <ul>
                     <li><a class="d-none nav-link scrollto" href="<?php echo esc_url( home_url( '/' ) ); ?>#quemsomos">Quem Somos</a></li>
                     <li><a class="nav-link scrollto" href="<?php echo esc_url( home_url( '/' ) ); ?>#servicos">Serviços</a></li>
-                    <li><a class="nav-link scrollto" href="<?php echo esc_url( home_url( '/' ) ); ?>#portfolio">Portfolio</a></li>
-                    <li><a class="nav-link scrollto d-none" href="<?php echo esc_url( home_url( '/' ) ); ?>#blog">Blog</a></li>
+                    <?php $args = [
+                        'post_type'      => 'portfolio',
+                        'posts_per_page' => 1,
+                        'fields'         => 'ids',
+                    ];
+                    $portfolio_query = new WP_Query($args);
+                    if ($portfolio_query->have_posts()) : ?>
+                        <li><a class="nav-link scrollto" href="<?php echo esc_url( home_url( '/' ) ); ?>#portfolio">Portfolio</a></li>
+                    <?php endif; wp_reset_postdata(); ?>
+                    <?php
+                    $blog_args = array(
+                        'post_type'      => 'post', 
+                        'posts_per_page' => 1,
+                        'fields'         => 'ids',
+                    );
+                    $blog_query = new WP_Query( $blog_args );
+                    if ( $blog_query->have_posts() ) : ?>
+                        <li><a class="nav-link scrollto" href="<?php echo esc_url( home_url( '/' ) ); ?>#recent-blog-posts">Blog</a></li>
+                    <?php endif; wp_reset_postdata(); ?>
                     <li><a class="nav-link scrollto" href="<?php echo esc_url( home_url( '/' ) ); ?>#contato">Contato</a></li>
                 </ul>
                 <i class="bi bi-list mobile-nav-toggle d-none"></i>

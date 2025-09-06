@@ -563,6 +563,7 @@ section {
   }
 }
 
+
 /*--------------------------------------------------------------
 # Index Page
 --------------------------------------------------------------*/
@@ -2221,7 +2222,6 @@ section {
 .recent-blog-posts .post-box .meta {
   margin-top: 15px;
 }
-
 .recent-blog-posts .post-box .meta .post-date {
   font-size: 15px;
   font-weight: 400;
@@ -2232,6 +2232,9 @@ section {
   font-size: 15px;
   font-weight: 400;
   color: var(--color-secondary);
+  background: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
 .recent-blog-posts .post-box .post-title {
@@ -2571,6 +2574,73 @@ section {
 /*--------------------------------------------------------------
 # Blog Stylings
 --------------------------------------------------------------*/
+/*--------------------------------------------------------------
+# Recent Posts Section
+--------------------------------------------------------------*/
+.recent-posts article {
+  background: var(--surface-color);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  height: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.recent-posts .section-title h3 {
+  font-weight: 600;
+  font-size: 24px;
+}
+
+.recent-posts .section-title p {
+  color: var(--color-secondary-light);
+  margin-bottom: 30px;
+  font-size: 15px;
+}
+
+.recent-posts .post-img {
+  max-height: 240px;
+  margin: -30px -30px 15px -30px;
+  overflow: hidden;
+}
+
+.recent-posts .post-category {
+  font-size: 16px;
+  color: color-mix(in srgb, var(--default-color), transparent 50%);
+  margin-bottom: 10px;
+}
+
+.recent-posts .title {
+  font-size: 20px;
+  font-weight: 700;
+  padding: 0;
+  margin: 0 0 20px 0;
+}
+
+.recent-posts .title a {
+  color: var(--heading-color);
+  transition: 0.3s;
+}
+
+.recent-posts .title a:hover {
+  color: var(--accent-color);
+}
+
+.recent-posts .post-author-img {
+  width: 50px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.recent-posts .post-author {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.recent-posts .post-date {
+  font-size: 14px;
+  color: color-mix(in srgb, var(--default-color), transparent 50%);
+  margin-bottom: 0;
+}
+
 /*--------------------------------------------------------------
 # Blog Home Posts List
 --------------------------------------------------------------*/
