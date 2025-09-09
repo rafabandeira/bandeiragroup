@@ -208,7 +208,7 @@ function bandeiragroup_register_portfolio_cpt() {
         'has_archive'        => true,
         'hierarchical'       => false,
         'menu_position'      => 5,
-        'supports'           => [ 'title', 'editor', 'thumbnail' ],
+        'supports'           => [ 'title', 'editor', 'thumbnail', 'excerpt' ],
         'menu_icon'          => 'dashicons-portfolio',
         'show_in_rest'       => true,
     ];
