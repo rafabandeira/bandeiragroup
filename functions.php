@@ -522,3 +522,66 @@ add_action( 'save_post', 'bandeiragroup_save_sticky_data' );
 // ====================================================================
 // END: CONFIGURAÇÃO DO PORTFÓLIO
 // ====================================================================
+
+
+
+
+/////////////////////////////////////////////////////////
+// Verificar atualizações do tema via servidor pessoal //
+/////////////////////////////////////////////////////////
+delete_site_transient('update_themes');
+function update_checker( $transient ) {
+    if ( empty( $transient->checked ) ) {
+        return $transient;
+    }
+    // URL do JSON de atualizações
+    $remote_json = 'https://raw.githubusercontent.com/rafabandeira/bandeiragroup/refs/heads/main/bandeiragroup.json';
+    // Buscar dados do JSON
+    $response = wp_remote_get( $remote_json, array(
+        'timeout' => 10,
+        'headers' => array( 'Accept' => 'application/json' )
+    ) );
+    // Se houver erro, retorne o transient original
+    if ( is_wp_error( $response ) ) {
+        return $transient;
+    }
+    // Verifica se a resposta é válida
+    if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
+        return $transient;
+    }
+    // Decodificar JSON
+    $remote_data = json_decode( wp_remote_retrieve_body( $response ) );
+    // Verificar se a decodificação foi bem-sucedida e se os campos necessários estão presentes
+    if ( json_last_error() !== JSON_ERROR_NONE || ! isset( $remote_data->version, $remote_data->details_url, $remote_data->download_url ) ) {
+        return $transient; // Retornar o transient original se houver erro na decodificação ou campos ausentes
+    }
+    // Identificar slug e versão do tema
+    $theme_slug = get_template(); // Slug do tema (nome da pasta)
+    $current_version = wp_get_theme( $theme_slug )->get( 'Version' );
+    // Comparar versões
+    if ( version_compare( $current_version, $remote_data->version, '<' ) ) {
+        $transient->response[ $theme_slug ] = array(
+            'theme'        => $theme_slug,
+            'new_version'  => $remote_data->version,
+            'details_url'  => esc_url( $remote_data->details_url ),
+            'package'      => esc_url( $remote_data->download_url ),
+        );
+    }
+    return $transient;
+}
+add_filter( 'pre_set_site_transient_update_themes', 'update_checker' );
+// Garantir que o código funcione em Multisite
+function update_checker_multisite_network() {
+    if ( is_multisite() ) {
+        $sites = get_sites();
+        foreach ( $sites as $site ) {
+            switch_to_blog( $site->blog_id );
+            // Executar o código de verificação para cada site
+            $transient = get_site_transient( 'update_themes' );
+            $transient = update_checker( $transient );
+            set_site_transient( 'update_themes', $transient );
+            restore_current_blog();
+        }
+    }
+}
+add_action( 'admin_init', 'update_checker_multisite_network' );
