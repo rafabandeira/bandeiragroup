@@ -45,12 +45,14 @@ if ($portfolio_query->have_posts()) :
             <div class="row g-0 portfolio-container">
 
                 <?php
-                  // O loop do WordPress para o nosso Custom Post Type
-                  $args = [
-                      'post_type'      => 'portfolio',
-                      'posts_per_page' => -1, // Exibe todos os itens
-                  ];
-                  $portfolio_query = new WP_Query($args);
+                $args = [
+                    'post_type'      => 'portfolio',
+                    'posts_per_page' => -1,         // Exibe todos os posts
+                    'post_status'    => 'publish',
+                    'orderby'        => 'title',    // Ordena por título
+                    'order'          => 'ASC'       // Em ordem ascendente (alfabética)
+                ];
+                $portfolio_query = new WP_Query($args);
 
                   if ($portfolio_query->have_posts()) :
                       while ($portfolio_query->have_posts()) : $portfolio_query->the_post();
