@@ -20,7 +20,8 @@ get_header(); ?>
                 </div>
             </div>
         </div>
-    </section><section id="blog-single" class="blog-single">
+    </section>
+    <section id="blog-single" class="blog-single">
         <div class="container" data-aos="fade-up">
 
             <?php if (have_posts()) : ?>
@@ -55,16 +56,7 @@ get_header(); ?>
         </div>
     </section>
 
-    <section id="cta" class="cta">
-        <div class="container" data-aos="zoom-out">
-            <div class="row g-5">
-                <div class="col content">
-                    <h3>Agende uma avaliação <em>gratuita</em></h3>
-                    <a class="cta-btn align-self-start" href="<?php echo esc_url(home_url('/contato')); ?>"> Converse com um especialista agora <i class="bi bi-arrow-right"></i></a>
-                </div>
-            </div>
-        </div>
-    </section>
+    <?php get_template_part( 'template-parts/cta-dois' ); ?>
 
 </main>
 
