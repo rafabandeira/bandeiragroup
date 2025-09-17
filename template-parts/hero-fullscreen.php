@@ -33,7 +33,7 @@ if ( $the_query->have_posts() ) :
                     <div class="row w-100 g-5">
                         <div class="col-lg-4">
                             <?php if ( $marca_url ) : ?>
-                                <img src="<?php echo esc_url( $marca_url ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?> Logo" class="img-fluid">
+                                <img src="<?php echo esc_url( $marca_url ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?> Logo" class="img-fluid" style="max-width: 100px;" >
                             <?php endif; ?>
                             <p><?php the_excerpt(); ?></p>
                             <div class="d-flex"><a href="<?php the_permalink(); ?>" class="btn-get-started">Ver este projeto</a></div>
