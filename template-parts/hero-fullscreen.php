@@ -96,16 +96,71 @@ if ( $the_query->have_posts() ) :
 else :
     // Se nenhum post fixo for encontrado, exibe a seção hero padrão.
 ?>
-    <section id="hero-fullscreen" class="hero-fullscreen d-flex align-items-center" style="background-image: url(<?php echo esc_url( get_template_directory_uri() . '/assets/img/hero-fullscreen-bg.jpg'); ?>) ;">
-        <div class="container d-flex flex-column align-items-center position-relative" data-aos="zoom-out">
-            <h2>Transformando ideias <br>em <span>experiências</span> digitais</h2>
-            <p>Design e web design profissionais para websites responsivos, rápidos e otimizados para resultados</p>
-            <div class="d-flex">
-                <a href="https://wa.me/5571991438900" class="btn-get-started" target="_blank">Vamos bater um papo?</a>
-            </div>
-        </div>
-    </section>
+    <div id="hero-fullscreen" class="swiper">
+        <div class="swiper-wrapper">
 
+            <section id="hero-fullscreen" class="hero-fullscreen d-flex align-items-center swiper-slide" style="background-image: url(<?php echo esc_url( get_template_directory_uri() . '/assets/img/hero-2-bandeiragroup.jpg'); ?>) ;">
+                <div class="container d-flex flex-column align-items-center position-relative" data-aos="zoom-out">
+                    <div class="col-8 mx-auto">
+                        <div class="badge bg-primary mb-3">Empresas locais</div>
+                        <h2>Transforme seu <span>negócio local</span><br>com presença digital profissional</h2>
+                        <p>Conectamos escritórios, clínicas e comércios aos seus clientes através de sites modernos e soluções digitais que geram resultados reais.</p>
+                        <div class="d-flex">
+                            <a href="https://wa.me/5571991438900" class="btn-get-started" target="_blank">Solicitar orçamento</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="hero-fullscreen" class="hero-fullscreen d-flex align-items-center swiper-slide" style="background-image: url(<?php echo esc_url( get_template_directory_uri() . '/assets/img/hero-3-bandeiragroup.jpg'); ?>) ;">
+                <div class="container d-flex flex-column align-items-center position-relative" data-aos="zoom-out">
+                    <div class="col-8 mx-auto">
+                        <div class="badge bg-primary mb-3">Orgulhosamente Baiano</div>
+                        <h2>Tecnologia com <span>alma baiana</span><br>para o <span>mundo digital</span></h2>
+                        <p>Da terra do axé e da inovação, levamos a criatividade e energia baiana para transformar negócios em todo o Brasil..</p>
+                        <div class="d-flex">
+                            <a href="https://wa.me/5571991438900" class="btn-get-started" target="_blank">Conheça nossa história</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="hero-fullscreen" class="hero-fullscreen d-flex align-items-center swiper-slide" style="background-image: url(<?php echo esc_url( get_template_directory_uri() . '/assets/img/hero-4-bandeiragroup.jpg'); ?>) ;">
+                <div class="container d-flex flex-column align-items-center position-relative" data-aos="zoom-out">
+                    <div class="col-8 mx-auto">
+                        <div class="badge bg-primary mb-3">Agências & Parceiros</div>
+                        <h2>Parcerias que potencializam<br><span>resultados excepcionais</span></h2>
+                        <p>Colaboramos com agências de propaganda, marketing e conteúdo para criar experiências digitais de alto nível que impressionam e convertem.</p>
+                        <div class="d-flex">
+                            <a href="https://wa.me/5571991438900" class="btn-get-started" target="_blank">Seja um parceiro</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
 <?php
 endif;
 ?>
+
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            new Swiper('#hero-fullscreen', {
+                speed: 300,
+                loop: true,
+                autoplay: {
+                    delay: 10000,
+                    disableOnInteraction: false
+                },
+                slidesPerView: 'auto',
+                pagination: {
+                    el: '.swiper-pagination',
+                    type: 'bullets',
+                    clickable: true
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev'
+                }
+            });
+        });
+    </script>

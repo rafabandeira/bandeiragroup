@@ -897,7 +897,7 @@ section {
 
 .hero-fullscreen:before {
   content: "";
-  background: rgba(var(--color-white-rgb), 0.9);
+  background: rgba(var(--color-white-rgb), 0.8);
   position: absolute;
   inset: 0;
 }
