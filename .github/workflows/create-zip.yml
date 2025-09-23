@@ -14,8 +14,7 @@ jobs:
 
       - name: Create ZIP
         run: |
-          THEME_SLUG="bandeiragroup"
-          zip -r $THEME_SLUG.zip $THEME_SLUG -x "*.git*" "*/.git/*"
+          zip -r bandeiragroup.zip . -x "*.git*" "*/.git/*"
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v1
