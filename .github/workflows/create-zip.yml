@@ -1,0 +1,23 @@
+name: Create Theme ZIP for Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Create ZIP file
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create ZIP
+        run: zip -r bandeiragroup.zip . -x "*.git*" "*/.git/*"
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: bandeiragroup.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
