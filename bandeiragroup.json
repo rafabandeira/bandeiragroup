@@ -3,7 +3,8 @@
   "version": "1.0.12",
   "author": "BandeiraGroup",
   "author_url": "https://bandeiragroup.com.br",
-  "details_url": "https://github.com/rafabandeira/bandeiragroup/releases",
+  "details_url": "https://github.com/rafabandeira/bandeiragroup/releases/tag/v1.0.12",
+  "download_url": "https://github.com/rafabandeira/bandeiragroup/releases/download/v1.0.12/bandeiragroup.zip",
   "requires_wp": "6.0",
   "requires_php": "7.4"
 }
